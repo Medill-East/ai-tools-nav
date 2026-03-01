@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 工具对比导航 - 找到最适合你的 AI 工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        
+        .category-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .category-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+        
+        .compare-checkbox:checked + div {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .comparison-table th {
+            background: rgba(99, 102, 241, 0.2);
+            position: sticky;
+            top: 0;
+        }
+        
+        .comparison-table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .pros-cons .pros {
+            border-left: 3px solid #10b981;
+        }
+        
+        .pros-cons .cons {
+            border-left: 3px solid #ef4444;
+        }
+        
+        .tag {
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+        }
+        
+        .new-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .rating-stars {
+            color: #fbbf24;
+        }
+        
+        .price-free { color: #10b981; }
+        .price-freemium { color: #f59e0b; }
+        .price-paid { color: #ef4444; }
+        
+        .view-toggle {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .view-toggle.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+        
+        .diff-highlight {
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+        
+        .best-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #000;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            z-index: 100;
+            transition: width 0.1s ease;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    
+    <!-- Header -->
+    <header class="glass sticky top-0 z-50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <i class="fas fa-robot text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white">AI 工具对比导航</h1>
+                        <p class="text-xs text-gray-400">找到最适合你的 AI 工具</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- View Toggle -->
+                    <div class="flex rounded-lg overflow-hidden border border-white/10">
+                        <button onclick="setViewMode('compare')" id="btnCompare" class="view-toggle active px-4 py-2 text-sm font-medium transition-all">
+                            <i class="fas fa-columns mr-2"></i>对比模式
+                        </button>
+                        <button onclick="setViewMode('grid')" id="btnGrid" class="view-toggle px-4 py-2 text-sm font-medium transition-all">
+                            <i class="fas fa-th-large mr-2"></i>网格视图
+                        </button>
+                    </div>
+                    <button onclick="toggleFavoritesView()" class="flex items-center gap-2 px-4 py-2 rounded-lg glass hover:bg-white/10 transition-colors">
+                        <i class="fas fa-heart text-red-400"></i>
+                        <span class="text-sm hidden sm:inline">收藏</span>
+                        <span id="favCount" class="bg-indigo-500 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-12 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                不只是罗列，更要对比
+            </h2>
+            <p class="text-gray-400 text-lg mb-8">
+                选择同类工具，直观对比它们的核心差异、优劣势和适用场景
+            </p>
+            
+            <!-- Search Bar -->
+            <div class="relative max-w-2xl mx-auto">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" 
+                       id="searchInput" 
+                       placeholder="搜索工具名称、功能或用途..."
+                       class="w-full pl-12 pr-4 py-4 rounded-2xl glass text-white placeholder-gray-500 outline-none border border-white/10 focus:border-indigo-500 transition-colors">
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Filter -->
+    <section class="px-4 mb-8">
+        <div class="max-w-7xl mx-auto">
+            <p class="text-sm text-gray-400 mb-4 text-center">选择分类，然后勾选要对比的工具（2-4个）</p>
+            <div class="flex flex-wrap gap-2 justify-center" id="categoryFilters">
+                <button class="category-btn active px-4 py-2 rounded-full glass text-sm font-medium" data-category="all">
+                    全部
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full glass text-sm font-medium" data-category="openclaw">
+                    🤖 OpenClaw 生态
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full glass text-sm font-medium" data-category="coding">
+                    💻 代码构建
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full glass text-sm font-medium" data-category="chat">
+                    💬 通用对话
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full glass text-sm font-medium" data-category="image">
+                    🎨 图像生成
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full glass text-sm font-medium" data-category="video">
+                    🎬 视频生成
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full glass text-sm font-medium" data-category="audio">
+                    🎵 音乐/音频
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full glass text-sm font-medium" data-category="productivity">
+                    📊 办公生产力
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full glass text-sm font-medium" data-category="search">
+                    🔍 搜索/研究
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compare Action Bar -->
+    <section id="compareBar" class="px-4 mb-6 hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="glass rounded-2xl p-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <span class="text-sm text-gray-400">已选择 <span id="selectedCount" class="text-white font-bold">0</span> 个工具</span>
+                    <div id="selectedTools" class="flex gap-2"></div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="clearSelection()" class="px-4 py-2 rounded-lg glass hover:bg-white/10 text-sm transition-colors">
+                        清空
+                    </button>
+                    <button onclick="showComparison()" id="btnShowCompare" class="px-6 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        开始对比
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Selection Grid (For Compare Mode) -->
+    <section id="selectionSection" class="px-4 pb-12">
+        <div class="max-w-7xl mx-auto">
+            <h3 class="text-lg font-semibold mb-4 text-center text-gray-300">点击卡片选择要对比的工具</h3>
+            <div id="toolsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                <!-- Tools will be rendered here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Result Section -->
+    <section id="comparisonSection" class="px-4 pb-12 hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-white">对比结果</h3>
+                <button onclick="backToSelection()" class="px-4 py-2 rounded-lg glass hover:bg-white/10 text-sm transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>返回选择
+                </button>
+            </div>
+            
+            <!-- Comparison Table -->
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="comparison-table w-full" id="comparisonTable">
+                        <!-- Table content will be rendered here -->
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Detailed Analysis -->
+            <div id="detailedAnalysis" class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Detailed cards will be rendered here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Grid View Section (Traditional) -->
+    <section id="gridSection" class="px-4 pb-12 hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-end gap-2 mb-6">
+                <select id="sortSelect" class="px-4 py-2 rounded-lg glass text-sm outline-none border border-white/10 cursor-pointer">
+                    <option value="recommended">推荐排序</option>
+                    <option value="newest">最新发布</option>
+                    <option value="rating">评分最高</option>
+                    <option value="name">名称排序</option>
+                </select>
+            </div>
+            <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Grid items will be rendered here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-8 px-4">
+        <div class="max-w-7xl mx-auto text-center text-gray-500 text-sm">
+            <p>AI 工具对比导航 | 帮你找到最适合的工具</p>
+            <p class="mt-2">最后更新: <span id="lastUpdate"></span></p>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // AI Tools Database with Detailed Comparison Data
+        // ============================================
+        
+        const toolsData = [
+            // OpenClaw 生态
+            {
+                id: 'openclaw',
+                name: 'OpenClaw',
+                category: 'openclaw',
+                description: '开源 AI 助手框架，支持多平台接入和自定义扩展',
+                icon: '🦾',
+                color: 'from-blue-500 to-cyan-500',
+                url: 'https://github.com/openclaw/openclaw',
+                price: 'free',
+                priceText: '开源免费',
+                rating: 4.8,
+                tags: ['开源', '框架', '多平台'],
+                isNew: false,
+                addedDate: '2024-01-15',
+                strengths: ['完全开源可定制', '支持多种 AI 模型', '社区活跃', '可自托管'],
+                weaknesses: ['需要技术基础', '配置较复杂', '生态相对较小'],
+                bestFor: ['开发者', '技术爱好者', '需要自托管的用户'],
+                comparisonPoints: {
+                    '部署方式': '自托管/本地',
+                    '模型支持': '多模型 (OpenAI/Claude/本地)',
+                    '学习曲线': '较陡',
+                    '社区规模': '中型',
+                    '定制程度': '极高'
+                }
+            },
+            {
+                id: 'claude-code',
+                name: 'Claude Code',
+                category: 'openclaw',
+                description: 'Anthropic 推出的终端 AI 编程助手，类似 OpenClaw 的命令行版本',
+                icon: '◈',
+                color: 'from-orange-500 to-red-500',
+                url: 'https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview',
+                price: 'freemium',
+                priceText: '限免中',
+                rating: 4.9,
+                tags: ['终端', '编程', 'Claude'],
+                isNew: true,
+                addedDate: '2025-02-28',
+                strengths: ['Claude 3.5 Sonnet 驱动', '代码能力极强', '终端原生体验', '文件操作流畅'],
+                weaknesses: ['仅限终端', '需要 Claude API', '学习命令需要时间'],
+                bestFor: ['程序员', '命令行用户', '需要深度代码分析'],
+                comparisonPoints: {
+                    '部署方式': '终端 CLI',
+                    '模型支持': '仅 Claude',
+                    '学习曲线': '中等',
+                    '社区规模': '快速增长',
+                    '代码能力': '极强'
+                }
+            },
+            {
+                id: 'kimi-claw',
+                name: 'Kimi Claw',
+                category: 'openclaw',
+                description: '基于 Kimi K2.5 的 OpenClaw 实现，支持长文本处理',
+                icon: '🌙',
+                color: 'from-purple-500 to-pink-500',
+                url: '#',
+                price: 'free',
+                priceText: '免费',
+                rating: 4.6,
+                tags: ['Kimi', '长文本', '国产'],
+                isNew: false,
+                addedDate: '2024-06-01',
+                strengths: ['200万字符上下文', '中文理解优秀', '完全免费', '国内访问稳定'],
+                weaknesses: ['功能相对简单', '生态不如 Claude', '不支持多模态'],
+                bestFor: ['中文用户', '长文档处理', '预算有限'],
+                comparisonPoints: {
+                    '部署方式': '云端',
+                    '模型支持': '仅 Kimi',
+                    '学习曲线': '平缓',
+                    '社区规模': '小型',
+                    '长文本': '极强 (200万)'
+                }
+            },
+
+            // 代码构建工具
+            {
+                id: 'cursor',
+                name: 'Cursor',
+                category: 'coding',
+                description: 'AI 原生代码编辑器，基于 VS Code，深度集成 Claude',
+                icon: '✦',
+                color: 'from-emerald-500 to-teal-500',
+                url: 'https://cursor.com',
+                price: 'freemium',
+                priceText: '免费/Pro $20',
+                rating: 4.9,
+                tags: ['IDE', '编辑器', 'Claude'],
+                isNew: false,
+                addedDate: '2024-01-01',
+                strengths: ['Claude 3.5 深度集成', 'Composer 多文件编辑', '代码补全精准', '生态成熟'],
+                weaknesses: ['价格较贵 ($20/月)', '重度依赖 Claude', '资源占用较高'],
+                bestFor: ['专业开发者', '全栈工程师', '追求效率的程序员'],
+                comparisonPoints: {
+                    '核心 AI': 'Claude 3.5 Sonnet',
+                    '编辑器': 'VS Code 分支',
+                    '多文件编辑': 'Composer (强)',
+                    '价格': '$20/月',
+                    '代码质量': '极高'
+                }
+            },
+            {
+                id: 'windsurf',
+                name: 'Windsurf',
+                category: 'coding',
+                description: 'Codeium 推出的 AI IDE，支持多文件协作编辑',
+                icon: '🌊',
+                color: 'from-cyan-500 to-blue-500',
+                url: 'https://codeium.com/windsurf',
+                price: 'freemium',
+                priceText: '免费/Pro $15',
+                rating: 4.7,
+                tags: ['IDE', 'Cascade', '协作'],
+                isNew: true,
+                addedDate: '2025-01-15',
+                strengths: ['Cascade 智能工作流', '价格更便宜 ($15)', 'Agent 模式先进', '界面现代'],
+                weaknesses: ['生态较新', '部分功能不稳定', '社区资源少'],
+                bestFor: ['预算敏感用户', '喜欢尝试新工具', '需要 Agent 能力'],
+                comparisonPoints: {
+                    '核心 AI': 'Codeium + GPT-4',
+                    '编辑器': '自研',
+                    '多文件编辑': 'Cascade (强)',
+                    '价格': '$15/月',
+                    'Agent 能力': '领先'
+                }
+            },
+            {
+                id: 'trae',
+                name: 'Trae',
+                category: 'coding',
+                description: '字节跳动推出的 AI IDE，针对国内开发者优化',
+                icon: '🔺',
+                color: 'from-red-500 to-orange-500',
+                url: 'https://trae.ai',
+                price: 'free',
+                priceText: '免费',
+                rating: 4.5,
+                tags: ['IDE', '国产', '字节'],
+                isNew: true,
+                addedDate: '2025-01-20',
+                strengths: ['完全免费', '国内访问快', '中文支持好', 'Builder 模式'],
+                weaknesses: ['功能相对简单', 'AI 能力不如 Cursor', '生态初期'],
+                bestFor: ['国内开发者', '学生', '预算为零'],
+                comparisonPoints: {
+                    '核心 AI': '豆包/Claude/GPT',
+                    '编辑器': '自研',
+                    '多文件编辑': 'Builder 模式',
+                    '价格': '免费',
+                    '中文支持': '优秀'
+                }
+            },
+            {
+                id: 'github-copilot',
+                name: 'GitHub Copilot',
+                category: 'coding',
+                description: 'GitHub 的 AI 编程助手，代码补全和生成功能强大',
+                icon: '👽',
+                color: 'from-gray-600 to-gray-800',
+                url: 'https://github.com/copilot',
+                price: 'paid',
+                priceText: '$10/月',
+                rating: 4.7,
+                tags: ['补全', 'GitHub', '主流'],
+                isNew: false,
+                addedDate: '2022-06-01',
+                strengths: ['代码补全最自然', 'IDE 支持最全', 'GitHub 生态整合', '稳定成熟'],
+                weaknesses: ['功能相对单一', '缺乏多文件能力', '上下文理解有限'],
+                bestFor: ['已有 IDE 用户', '需要代码补全', '追求稳定'],
+                comparisonPoints: {
+                    '核心 AI': 'Codex/GPT-4',
+                    '编辑器': '插件形式',
+                    '多文件编辑': '不支持',
+                    '价格': '$10/月',
+                    '补全体验': '最自然'
+                }
+            },
+
+            // 通用对话
+            {
+                id: 'chatgpt',
+                name: 'ChatGPT',
+                category: 'chat',
+                description: 'OpenAI 的旗舰对话模型，功能全面，生态丰富',
+                icon: '💬',
+                color: 'from-green-400 to-emerald-500',
+                url: 'https://chat.openai.com',
+                price: 'freemium',
+                priceText: '免费/Plus $20',
+                rating: 4.8,
+                tags: ['通用', 'GPT-4', '生态'],
+                isNew: false,
+                addedDate: '2022-11-01',
+                strengths: ['功能最全面', '插件生态丰富', 'o1 推理模型', '知名度最高'],
+                weaknesses: ['Plus 较贵', '免费版限制多', '隐私顾虑'],
+                bestFor: ['通用用户', '需要插件', '追求全面性'],
+                comparisonPoints: {
+                    '最强模型': 'GPT-4o / o1',
+                    '上下文': '128K',
+                    '特色功能': '插件/GPTs/Canvas',
+                    '价格': '$20/月',
+                    '生态': '最丰富'
+                }
+            },
+            {
+                id: 'claude',
+                name: 'Claude',
+                category: 'chat',
+                description: 'Anthropic 的 AI 助手，以安全性和长文本著称',
+                icon: '◈',
+                color: 'from-orange-400 to-red-500',
+                url: 'https://claude.ai',
+                price: 'freemium',
+                priceText: '免费/Pro $20',
+                rating: 4.9,
+                tags: ['安全', '长文本', '推理'],
+                isNew: false,
+                addedDate: '2023-03-01',
+                strengths: ['代码能力最强', 'Claude 3.5 Sonnet 优秀', 'Artifacts 交互', '更安全'],
+                weaknesses: ['无插件生态', '部分地区受限', '免费版额度少'],
+                bestFor: ['程序员', '长文档处理', '注重安全'],
+                comparisonPoints: {
+                    '最强模型': 'Claude 3.5 Sonnet',
+                    '上下文': '200K',
+                    '特色功能': 'Artifacts/Projects',
+                    '价格': '$20/月',
+                    '代码能力': '最强'
+                }
+            },
+            {
+                id: 'kimi',
+                name: 'Kimi',
+                category: 'chat',
+                description: '月之暗面的 AI 助手，超长上下文窗口，国产优秀',
+                icon: '🌙',
+                color: 'from-purple-500 to-indigo-500',
+                url: 'https://kimi.moonshot.cn',
+                price: 'freemium',
+                priceText: '免费/付费',
+                rating: 4.7,
+                tags: ['国产', '长文本', 'K2.5'],
+                isNew: false,
+                addedDate: '2023-10-01',
+                strengths: ['200万字符上下文', '中文理解顶尖', 'K2.5 推理强', '国内稳定'],
+                weaknesses: ['多模态较弱', '无插件', '国际知名度低'],
+                bestFor: ['中文用户', '超长文档', '国内优先'],
+                comparisonPoints: {
+                    '最强模型': 'Kimi K2.5',
+                    '上下文': '200万字',
+                    '特色功能': '超长文本/联网搜索',
+                    '价格': '免费/按量',
+                    '中文': '顶尖'
+                }
+            },
+            {
+                id: 'deepseek',
+                name: 'DeepSeek',
+                category: 'chat',
+                description: '深度求索的 AI 助手，推理能力强，性价比高',
+                icon: '🐋',
+                color: 'from-blue-500 to-indigo-600',
+                url: 'https://chat.deepseek.com',
+                price: 'free',
+                priceText: '免费',
+                rating: 4.8,
+                tags: ['国产', '推理', '开源'],
+                isNew: true,
+                addedDate: '2025-01-10',
+                strengths: ['R1 推理模型顶尖', '完全免费', '开源可商用', '数学代码强'],
+                weaknesses: ['界面较简单', '生态初期', '多模态暂无'],
+                bestFor: ['推理任务', '数学编程', '预算敏感'],
+                comparisonPoints: {
+                    '最强模型': 'DeepSeek-R1',
+                    '上下文': '64K',
+                    '特色功能': '深度思考/联网',
+                    '价格': '免费',
+                    '推理': '顶尖'
+                }
+            },
+
+            // 图像生成
+            {
+                id: 'midjourney',
+                name: 'Midjourney',
+                category: 'image',
+                description: '艺术风格图像生成的标杆，美学质量极高',
+                icon: '🎨',
+                color: 'from-pink-500 to-rose-500',
+                url: 'https://midjourney.com',
+                price: 'paid',
+                priceText: '$10/月起',
+                rating: 4.9,
+                tags: ['艺术', '美学', '标杆'],
+                isNew: false,
+                addedDate: '2022-07-01',
+                strengths: ['美学质量最高', '艺术风格独特', '社区作品丰富', 'V6 细节惊人'],
+                weaknesses: ['Discord 操作', '可控性差', '无免费版', '中文支持弱'],
+                bestFor: ['艺术创作', '设计师', '追求美学'],
+                comparisonPoints: {
+                    '质量': '最高',
+                    '可控性': '低',
+                    '学习曲线': '中等',
+                    '价格': '$10-120/月',
+                    '风格': '艺术/梦幻'
+                }
+            },
+            {
+                id: 'flux',
+                name: 'Flux',
+                category: 'image',
+                description: 'Black Forest Labs 开源模型，质量接近 Midjourney',
+                icon: '⚡',
+                color: 'from-yellow-500 to-orange-500',
+                url: 'https://flux.ai',
+                price: 'freemium',
+                priceText: '开源/API',
+                rating: 4.7,
+                tags: ['开源', '高质量', '快速'],
+                isNew: true,
+                addedDate: '2024-08-01',
+                strengths: ['开源免费', '质量接近 MJ', '文字渲染好', '可本地部署'],
+                weaknesses: ['生态较新', '提示词要求高', '硬件要求高(本地)'],
+                bestFor: ['技术用户', '预算有限', '需要可控'],
+                comparisonPoints: {
+                    '质量': '接近 MJ',
+                    '可控性': '高',
+                    '学习曲线': '较陡',
+                    '价格': '免费/API',
+                    '风格': '写实/多样'
+                }
+            },
+            {
+                id: 'dalle3',
+                name: 'DALL-E 3',
+                category: 'image',
+                description: 'OpenAI 的图像生成模型，文字渲染能力强',
+                icon: '🖼️',
+                color: 'from-green-500 to-teal-500',
+                url: 'https://openai.com/dall-e-3',
+                price: 'freemium',
+                priceText: 'ChatGPT 内用',
+                rating: 4.6,
+                tags: ['文字渲染', 'OpenAI', '集成'],
+                isNew: false,
+                addedDate: '2023-10-01',
+                strengths: ['文字渲染最好', 'ChatGPT 集成', '提示词理解强', '易用'],
+                weaknesses: ['风格较单一', '创意受限', '依赖 ChatGPT'],
+                bestFor: ['需要文字', 'ChatGPT 用户', '易用优先'],
+                comparisonPoints: {
+                    '质量': '良好',
+                    '可控性': '中等',
+                    '学习曲线': '平缓',
+                    '价格': 'ChatGPT Plus',
+                    '文字': '最好'
+                }
+            },
+
+            // 视频生成
+            {
+                id: 'sora',
+                name: 'Sora',
+                category: 'video',
+                description: 'OpenAI 的视频生成模型，物理模拟能力出色',
+                icon: '🎬',
+                color: 'from-red-500 to-pink-500',
+                url: 'https://openai.com/sora',
+                price: 'paid',
+                priceText: 'Plus 用户',
+                rating: 4.8,
+                tags: ['物理模拟', 'OpenAI', '高质量'],
+                isNew: true,
+                addedDate: '2024-12-01',
+                strengths: ['物理模拟顶尖', '画质最高', '理解力强', 'OpenAI 生态'],
+                weaknesses: ['访问受限', '生成慢', '控制有限'],
+                bestFor: ['高质量需求', 'OpenAI 用户', '专业制作'],
+                comparisonPoints: {
+                    '质量': '最高',
+                    '物理模拟': '顶尖',
+                    '生成速度': '慢',
+                    '价格': 'Plus $20',
+                    '可用性': '受限'
+                }
+            },
+            {
+                id: 'kling',
+                name: '可灵 AI',
+                category: 'video',
+                description: '快手的视频生成模型，国产最强',
+                icon: '🎭',
+                color: 'from-orange-500 to-red-500',
+                url: 'https://klingai.com',
+                price: 'freemium',
+                priceText: '免费/付费',
+                rating: 4.6,
+                tags: ['国产', '快手', '运动'],
+                isNew: true,
+                addedDate: '2024-06-01',
+                strengths: ['国产最强', '运动表现好', '国内稳定', '性价比高'],
+                weaknesses: ['风格较单一', '长视频有限', '国际知名度低'],
+                bestFor: ['国内用户', '性价比优先', '短视频'],
+                comparisonPoints: {
+                    '质量': '优秀',
+                    '物理模拟': '良好',
+                    '生成速度': '快',
+                    '价格': '免费/积分',
+                    '可用性': '国内友好'
+                }
+            },
+            {
+                id: 'runway',
+                name: 'Runway',
+                category: 'video',
+                description: '专业级 AI 视频编辑和生成平台',
+                icon: '🎥',
+                color: 'from-purple-500 to-pink-500',
+                url: 'https://runwayml.com',
+                price: 'paid',
+                priceText: '$15/月起',
+                rating: 4.7,
+                tags: ['专业', '编辑', 'Gen-3'],
+                isNew: false,
+                addedDate: '2023-02-01',
+                strengths: ['功能最全面', '编辑工具强', 'Gen-3 质量好', '专业工作流'],
+                weaknesses: ['价格较高', '学习曲线陡', '生成额度有限'],
+                bestFor: ['专业创作者', '需要编辑', '商业项目'],
+                comparisonPoints: {
+                    '质量': '优秀',
+                    '编辑功能': '最强',
+                    '生成速度': '中等',
+                    '价格': '$15-76/月',
+                    '专业度': '最高'
+                }
+            },
+
+            // 音乐/音频
+            {
+                id: 'suno',
+                name: 'Suno',
+                category: 'audio',
+                description: 'AI 音乐生成，支持歌词和多种风格',
+                icon: '🎵',
+                color: 'from-yellow-400 to-orange-500',
+                url: 'https://suno.ai',
+                price: 'freemium',
+                priceText: '免费/Pro $10',
+                rating: 4.8,
+                tags: ['音乐', '歌词', '流行'],
+                isNew: false,
+                addedDate: '2023-12-01',
+                strengths: ['人声最自然', '风格多样', '歌词生成强', '社区活跃'],
+                weaknesses: ['版权不确定', '控制有限', '长歌曲难'],
+                bestFor: ['音乐创作', '内容创作者', '快速原型'],
+                comparisonPoints: {
+                    '人声质量': '最高',
+                    '风格多样': '是',
+                    '歌词': '支持',
+                    '价格': '$10/月',
+                    '易用性': '简单'
+                }
+            },
+            {
+                id: 'udio',
+                name: 'Udio',
+                category: 'audio',
+                description: '高质量 AI 音乐生成，音质出色',
+                icon: '🎶',
+                color: 'from-blue-400 to-indigo-500',
+                url: 'https://udio.com',
+                price: 'freemium',
+                priceText: '免费/付费',
+                rating: 4.7,
+                tags: ['音乐', '音质', '专业'],
+                isNew: false,
+                addedDate: '2024-04-01',
+                strengths: ['音质顶尖', '专业感强', '细节丰富', '风格控制好'],
+                weaknesses: ['人声不如 Suno', '免费额度少', '学习曲线陡'],
+                bestFor: ['专业音乐', '音质优先', '细节控'],
+                comparisonPoints: {
+                    '人声质量': '良好',
+                    '音质': '最高',
+                    '专业度': '高',
+                    '价格': '订阅制',
+                    '控制': '精细'
+                }
+            },
+            {
+                id: 'elevenlabs',
+                name: 'ElevenLabs',
+                category: 'audio',
+                description: '最自然的 AI 语音合成，支持多语言和克隆',
+                icon: '🗣️',
+                color: 'from-teal-500 to-cyan-500',
+                url: 'https://elevenlabs.io',
+                price: 'freemium',
+                priceText: '免费/付费',
+                rating: 4.9,
+                tags: ['语音', 'TTS', '克隆'],
+                isNew: false,
+                addedDate: '2023-01-01',
+                strengths: ['最自然的 TTS', '多语言支持', '语音克隆顶尖', '情感丰富'],
+                weaknesses: ['音乐生成弱', '价格较高', '中文有口音'],
+                bestFor: ['配音', '有声书', '多语言内容'],
+                comparisonPoints: {
+                    '自然度': '最高',
+                    '语言': '29+',
+                    '克隆': '顶尖',
+                    '价格': '$5-330',
+                    '用途': 'TTS/配音'
+                }
+            },
+
+            // 搜索/研究
+            {
+                id: 'perplexity',
+                name: 'Perplexity',
+                category: 'search',
+                description: 'AI 搜索引擎，提供带来源的详细回答',
+                icon: '🔍',
+                color: 'from-teal-400 to-emerald-500',
+                url: 'https://perplexity.ai',
+                price: 'freemium',
+                priceText: '免费/Pro $20',
+                rating: 4.8,
+                tags: ['搜索', '研究', '来源'],
+                isNew: false,
+                addedDate: '2022-12-01',
+                strengths: ['来源可靠', '回答详细', '实时信息', '界面简洁'],
+                weaknesses: ['深度有限', '创意不足', '专业领域一般'],
+                bestFor: ['日常研究', '快速了解', '事实核查'],
+                comparisonPoints: {
+                    '来源': '可靠',
+                    '实时性': '强',
+                    '深度': '中等',
+                    '价格': '$20/月',
+                    '适用': '通用搜索'
+                }
+            },
+            {
+                id: 'metaso',
+                name: '秘塔 AI 搜索',
+                category: 'search',
+                description: '国产 AI 搜索引擎，结构化展示结果',
+                icon: '🔎',
+                color: 'from-blue-500 to-indigo-500',
+                url: 'https://metaso.cn',
+                price: 'free',
+                priceText: '免费',
+                rating: 4.6,
+                tags: ['国产', '结构化', '研究'],
+                isNew: false,
+                addedDate: '2023-06-01',
+                strengths: ['完全免费', '中文优化', '脑图展示', '学术搜索强'],
+                weaknesses: ['国际内容弱', '功能较单一', '知名度低'],
+                bestFor: ['中文用户', '学术研究', '免费需求'],
+                comparisonPoints: {
+                    '来源': '良好',
+                    '实时性': '中等',
+                    '深度': '良好',
+                    '价格': '免费',
+                    '适用': '中文搜索'
+                }
+            }
+        ];
+
+        // ============================================
+        // State Management
+        // ============================================
+        
+        let currentCategory = 'all';
+        let currentView = 'compare'; // 'compare' or 'grid'
+        let searchQuery = '';
+        let selectedTools = [];
+        let favorites = JSON.parse(localStorage.getItem('aiToolsFavorites') || '[]');
+
+        // ============================================
+        // Utility Functions
+        // ============================================
+        
+        function getPriceClass(price) {
+            return price === 'free' ? 'price-free' : 
+                   price === 'freemium' ? 'price-freemium' : 'price-paid';
+        }
+
+        function updateFavCount() {
+            document.getElementById('favCount').textContent = favorites.length;
+        }
+
+        function updateLastUpdate() {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('zh-CN');
+        }
+
+        // ============================================
+        // View Mode Functions
+        // ============================================
+        
+        function setViewMode(mode) {
+            currentView = mode;
+            
+            // Update buttons
+            document.getElementById('btnCompare').classList.toggle('active', mode === 'compare');
+            document.getElementById('btnGrid').classList.toggle('active', mode === 'grid');
+            
+            // Show/hide sections
+            document.getElementById('selectionSection').classList.toggle('hidden', mode !== 'compare');
+            document.getElementById('compareBar').classList.toggle('hidden', mode !== 'compare' || selectedTools.length === 0);
+            document.getElementById('comparisonSection').classList.add('hidden');
+            document.getElementById('gridSection').classList.toggle('hidden', mode !== 'grid');
+            
+            if (mode === 'grid') {
+                renderGridView();
+            } else {
+                renderSelectionGrid();
+            }
+        }
+
+        // ============================================
+        // Selection Grid (Compare Mode)
+        // ============================================
+        
+        function renderSelectionGrid() {
+            const grid = document.getElementById('toolsGrid');
+            
+            let filtered = toolsData.filter(tool => {
+                const matchesCategory = currentCategory === 'all' || tool.category === currentCategory;
+                const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    tool.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    tool.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+                return matchesCategory && matchesSearch;
+            });
+
+            grid.innerHTML = filtered.map((tool, index) => {
+                const isSelected = selectedTools.includes(tool.id);
+                const isFav = favorites.includes(tool.id);
+                
+                return `
+                    <label class="cursor-pointer group">
+                        <input type="checkbox" class="compare-checkbox hidden" 
+                               value="${tool.id}" 
+                               ${isSelected ? 'checked' : ''}
+                               onchange="toggleToolSelection('${tool.id}')">
+                        <div class="card-hover glass rounded-xl p-4 border-2 border-transparent transition-all ${isSelected ? 'border-indigo-500 bg-indigo-500/10' : ''}">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="tool-icon bg-gradient-to-br ${tool.color} text-white text-xl">
+                                    ${tool.icon}
+                                </div>
+                                <div class="flex gap-1">
+                                    ${tool.isNew ? '<span class="new-badge text-xs px-2 py-0.5 rounded-full text-white font-bold">NEW</span>' : ''}
+                                    <button onclick="event.preventDefault(); toggleFavorite('${tool.id}')" class="text-lg ${isFav ? 'text-red-400' : 'text-gray-600 hover:text-red-400'}">
+                                        <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <h4 class="font-bold text-white mb-1">${tool.name}</h4>
+                            <p class="text-xs text-gray-400 mb-2 line-clamp-2">${tool.description}</p>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs ${getPriceClass(tool.price)} font-medium">${tool.priceText}</span>
+                                <span class="rating-stars text-xs"><i class="fas fa-star"></i> ${tool.rating}</span>
+                            </div>
+                            
+                            ${isSelected ? '<div class="mt-2 text-center text-xs text-indigo-400">✓ 已选择</div>' : ''}
+                        </div>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function toggleToolSelection(toolId) {
+            const index = selectedTools.indexOf(toolId);
+            if (index > -1) {
+                selectedTools.splice(index, 1);
+            } else {
+                if (selectedTools.length >= 4) {
+                    alert('最多只能选择 4 个工具进行对比');
+                    return;
+                }
+                selectedTools.push(toolId);
+            }
+            updateCompareBar();
+            renderSelectionGrid();
+        }
+
+        function updateCompareBar() {
+            const bar = document.getElementById('compareBar');
+            const count = document.getElementById('selectedCount');
+            const toolsContainer = document.getElementById('selectedTools');
+            const btn = document.getElementById('btnShowCompare');
+            
+            if (selectedTools.length === 0) {
+                bar.classList.add('hidden');
+                return;
+            }
+            
+            bar.classList.remove('hidden');
+            count.textContent = selectedTools.length;
+            
+            toolsContainer.innerHTML = selectedTools.map(id => {
+                const tool = toolsData.find(t => t.id === id);
+                return `
+                    <span class="glass px-3 py-1 rounded-full text-xs flex items-center gap-2">
+                        ${tool.icon} ${tool.name}
+                        <button onclick="toggleToolSelection('${id}')" class="text-gray-500 hover:text-red-400">×</button>
+                    </span>
+                `;
+            }).join('');
+            
+            btn.disabled = selectedTools.length < 2;
+            btn.textContent = selectedTools.length < 2 ? '至少选择 2 个' : '开始对比';
+        }
+
+        function clearSelection() {
+            selectedTools = [];
+            updateCompareBar();
+            renderSelectionGrid();
+        }
+
+        // ============================================
+        // Comparison Display
+        // ============================================
+        
+        function showComparison() {
+            if (selectedTools.length < 2) return;
+            
+            const tools = selectedTools.map(id => toolsData.find(t => t.id === id));
+            
+            document.getElementById('selectionSection').classList.add('hidden');
+            document.getElementById('compareBar').classList.add('hidden');
+            document.getElementById('comparisonSection').classList.remove('hidden');
+            
+            renderComparisonTable(tools);
+            renderDetailedAnalysis(tools);
+        }
+
+        function backToSelection() {
+            document.getElementById('comparisonSection').classList.add('hidden');
+            document.getElementById('selectionSection').classList.remove('hidden');
+            document.getElementById('compareBar').classList.remove('hidden');
+        }
+
+        function renderComparisonTable(tools) {
+            const table = document.getElementById('comparisonTable');
+            
+            // Get all comparison keys
+            const allKeys = [...new Set(tools.flatMap(t => Object.keys(t.comparisonPoints)))];
+            
+            // Find best values for highlighting
+            const bestValues = {};
+            allKeys.forEach(key => {
+                const values = tools.map(t => t.comparisonPoints[key] || '-');
+                // Simple heuristic: prefer certain keywords
+                if (key.includes('价格') || key.includes('速度')) {
+                    bestValues[key] = values.find(v => v.includes('免费') || v.includes('快'));
+                } else if (key.includes('质量') || key.includes('能力')) {
+                    bestValues[key] = values.find(v => v.includes('最高') || v.includes('最强') || v.includes('顶尖'));
+                }
+            });
+            
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th class="text-left p-4 text-indigo-300">对比维度</th>
+                        ${tools.map(tool => `
+                            <th class="p-4 text-center min-w-[150px]">
+                                <div class="flex flex-col items-center">
+                                    <div class="tool-icon bg-gradient-to-br ${tool.color} text-white text-2xl mb-2">${tool.icon}</div>
+                                    <div class="font-bold text-white">${tool.name}</div>
+                                    <div class="text-xs text-gray-400 mt-1">${tool.priceText}</div>
+                                </div>
+                            </th>
+                        `).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="p-4 text-gray-400 font-medium">一句话评价</td>
+                        ${tools.map(tool => `
+                            <td class="p-4 text-center text-sm">${tool.description}</td>
+                        `).join('')}
+                    </tr>
+                    ${allKeys.map(key => `
+                        <tr>
+                            <td class="p-4 text-gray-400 font-medium">${key}</td>
+                            ${tools.map(tool => {
+                                const value = tool.comparisonPoints[key] || '-';
+                                const isBest = value === bestValues[key];
+                                return `
+                                    <td class="p-4 text-center ${isBest ? 'diff-highlight font-medium' : ''}">
+                                        ${value}
+                                        ${isBest ? '<span class="best-badge ml-1">推荐</span>' : ''}
+                                    </td>
+                                `;
+                            }).join('')}
+                        </tr>
+                    `).join('')}
+                    <tr>
+                        <td class="p-4 text-gray-400 font-medium">评分</td>
+                        ${tools.map(tool => `
+                            <td class="p-4 text-center">
+                                <span class="rating-stars"><i class="fas fa-star"></i> ${tool.rating}</span>
+                            </td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td class="p-4 text-gray-400 font-medium">操作</td>
+                        ${tools.map(tool => `
+                            <td class="p-4 text-center">
+                                <a href="${tool.url}" target="_blank" 
+                                   class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm transition-colors">
+                                    访问官网 <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </td>
+                        `).join('')}
+                    </tr>
+                </tbody>
+            `;
+        }
+
+        function renderDetailedAnalysis(tools) {
+            const container = document.getElementById('detailedAnalysis');
+            
+            container.innerHTML = tools.map(tool => `
+                <div class="glass rounded-2xl p-6 fade-in">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="tool-icon bg-gradient-to-br ${tool.color} text-white">${tool.icon}</div>
+                        <div>
+                            <h4 class="font-bold text-lg text-white">${tool.name}</h4>
+                            <div class="flex gap-2 mt-1">
+                                ${tool.tags.map(tag => `<span class="tag text-xs px-2 py-0.5 rounded-full">${tag}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pros-cons space-y-4">
+                        <div class="pros pl-3">
+                            <h5 class="text-green-400 font-semibold text-sm mb-2"><i class="fas fa-check-circle mr-2"></i>优势</h5>
+                            <ul class="space-y-1">
+                                ${tool.strengths.map(s => `<li class="text-sm text-gray-300">${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="cons pl-3">
+                            <h5 class="text-red-400 font-semibold text-sm mb-2"><i class="fas fa-times-circle mr-2"></i>劣势</h5>
+                            <ul class="space-y-1">
+                                ${tool.weaknesses.map(w => `<li class="text-sm text-gray-300">${w}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-white/10">
+                            <h5 class="text-indigo-400 font-semibold text-sm mb-2"><i class="fas fa-user-check mr-2"></i>最适合</h5>
+                            <p class="text-sm text-gray-300">${tool.bestFor.join('、')}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================
+        // Grid View (Traditional)
+        // ============================================
+        
+        function renderGridView() {
+            const grid = document.getElementById('gridView');
+            const sort = document.getElementById('sortSelect').value;
+            
+            let filtered = toolsData.filter(tool => {
+                const matchesCategory = currentCategory === 'all' || tool.category === currentCategory;
+                const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    tool.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    tool.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+                return matchesCategory && matchesSearch;
+            });
+            
+            // Sort
+            filtered.sort((a, b) => {
+                if (sort === 'newest') return new Date(b.addedDate) - new Date(a.addedDate);
+                if (sort === 'rating') return b.rating - a.rating;
+                if (sort === 'name') return a.name.localeCompare(b.name);
+                return (b.isNew ? 100 : 0) + b.rating - (a.isNew ? 100 : 0) - a.rating;
+            });
+            
+            grid.innerHTML = filtered.map(tool => {
+                const isFav = favorites.includes(tool.id);
+                return `
+                    <div class="card-hover glass rounded-2xl p-5 border border-white/10">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="tool-icon bg-gradient-to-br ${tool.color} text-white">${tool.icon}</div>
+                            <div class="flex gap-2">
+                                ${tool.isNew ? '<span class="new-badge text-xs px-2 py-1 rounded-full text-white font-medium">NEW</span>' : ''}
+                                <button onclick="toggleFavorite('${tool.id}')" class="text-lg ${isFav ? 'text-red-400' : 'text-gray-600 hover:text-red-400'}">
+                                    <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-lg font-bold text-white mb-2">${tool.name}</h3>
+                        <p class="text-gray-400 text-sm mb-4">${tool.description}</p>
+                        
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            ${tool.tags.map(tag => `<span class="tag text-xs px-2 py-1 rounded-full">${tag}</span>`).join('')}
+                        </div>
+                        
+                        <div class="flex items-center justify-between pt-4 border-t border-white/10">
+                            <div class="flex items-center gap-2">
+                                <span class="rating-stars text-sm"><i class="fas fa-star"></i> ${tool.rating}</span>
+                                <span class="${getPriceClass(tool.price)} text-xs font-medium">${tool.priceText}</span>
+                            </div>
+                            <a href="${tool.url}" target="_blank" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium transition-colors">
+                                访问 <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // Favorites
+        // ============================================
+        
+        function toggleFavorite(toolId) {
+            const index = favorites.indexOf(toolId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(toolId);
+            }
+            localStorage.setItem('aiToolsFavorites', JSON.stringify(favorites));
+            updateFavCount();
+            
+            if (currentView === 'compare') {
+                renderSelectionGrid();
+            } else {
+                renderGridView();
+            }
+        }
+
+        function toggleFavoritesView() {
+            // Filter to show only favorites
+            const favTools = toolsData.filter(t => favorites.includes(t.id));
+            if (favTools.length === 0) {
+                alert('还没有收藏任何工具');
+                return;
+            }
+            
+            // Set search to show favorites
+            alert(`你已收藏 ${favorites.length} 个工具：\n${favTools.map(t => `• ${t.name}`).join('\n')}`);
+        }
+
+        // ============================================
+        // Event Listeners
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Category filters
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentCategory = btn.dataset.category;
+                    
+                    if (currentView === 'compare') {
+                        renderSelectionGrid();
+                    } else {
+                        renderGridView();
+                    }
+                });
+            });
+            
+            // Search
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                if (currentView === 'compare') {
+                    renderSelectionGrid();
+                } else {
+                    renderGridView();
+                }
+            });
+            
+            // Sort
+            document.getElementById('sortSelect').addEventListener('change', () => {
+                renderGridView();
+            });
+            
+            // Scroll indicator
+            window.addEventListener('scroll', () => {
+                const scrollTop = document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (scrollTop / scrollHeight) * 100;
+                document.getElementById('scrollIndicator').style.width = scrolled + '%';
+            });
+            
+            // Initialize
+            updateFavCount();
+            updateLastUpdate();
+            renderSelectionGrid();
+        });
+    </script>
+</body>
+</html>
