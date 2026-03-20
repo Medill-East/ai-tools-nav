@@ -184,21 +184,29 @@
             <div class="glass rounded-2xl p-6 border border-indigo-500/30">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="text-2xl">📰</span>
-                    <h3 class="text-xl font-bold text-white">今日 AI 新闻 · 2025年3月20日</h3>
+                    <h3 class="text-xl font-bold text-white">今日 AI 新闻 · 2026年3月21日</h3>
                     <span class="new-badge text-xs px-2 py-0.5 rounded-full text-white font-bold">NEW</span>
                 </div>
                 <div class="space-y-4">
                     <div class="border-l-2 border-indigo-500 pl-4">
-                        <h4 class="font-semibold text-indigo-300 mb-1">🔥 豆包 AI 编程功能升级</h4>
-                        <p class="text-sm text-gray-400">豆包宣布 AI 编程功能迎来三项升级：HTML 预览、Python 运行和生成完整项目。用户可实时预览 HTML 代码并直接运行 Python，报错时一键修复。</p>
+                        <h4 class="font-semibold text-indigo-300 mb-1">🔥 OpenAI 发布 GPT-5.4 mini 与 nano 模型</h4>
+                        <p class="text-sm text-gray-400">3月17日，OpenAI 正式推出 GPT-5.4 mini 和 GPT-5.4 nano 两款小型语言模型。mini 版本面向高频低延迟场景，响应速度提升超2倍；nano 为最小最经济版本，适用于轻量任务。来源：https://help.openai.com/en/articles/9624314</p>
                     </div>
                     <div class="border-l-2 border-purple-500 pl-4">
-                        <h4 class="font-semibold text-purple-300 mb-1">🤖 DeepSeek 发布大模型部署专利</h4>
-                        <p class="text-sm text-gray-400">DeepSeek 关联公司公开"大语言模型部署方法及系统"专利，创新性地将预填充和解码阶段分别部署在不同硬件上，显著提升系统吞吐量。</p>
+                        <h4 class="font-semibold text-purple-300 mb-1">🤖 DeepSeek V4 预计4月发布</h4>
+                        <p class="text-sm text-gray-400">据《白鲸实验室》独家爆料，DeepSeek V4 将于2026年4月正式上线。该模型将补齐 DeepSeek 在视觉内容处理和 AI 搜索上的短板，并在长期记忆能力上取得突破。来源：https://www.ithome.com/0/929/040.htm</p>
                     </div>
                     <div class="border-l-2 border-green-500 pl-4">
-                        <h4 class="font-semibold text-green-300 mb-1">🌐 小米浏览器接入豆包大模型</h4>
-                        <p class="text-sm text-gray-400">小米自带浏览器升级 AI 搜索功能，接入豆包大模型及火山方舟智能体，支持 AI 问答、翻译、拍题等功能，覆盖数亿小米终端用户。</p>
+                        <h4 class="font-semibold text-green-300 mb-1">🌐 Google 发布 Gemini 3.1 Pro 与多模态嵌入模型</h4>
+                        <p class="text-sm text-gray-400">2026年2月，Google 推出 Gemini 3.1 Pro 模型，专为复杂推理任务设计。同时发布首个多模态嵌入模型 gemini-embedding-2-preview，支持文本、图片、视频、音频和 PDF 输入。来源：https://ai.google.dev/gemini-api/docs/changelog</p>
+                    </div>
+                    <div class="border-l-2 border-orange-500 pl-4">
+                        <h4 class="font-semibold text-orange-300 mb-1">💻 Cursor 进入「第三代编程」时代</h4>
+                        <p class="text-sm text-gray-400">Cursor CEO 宣布正式迈入 AI 编程「第三时代」，代理能在更少人工干预下独立完成更大规模任务。Cloud Agents 可在隔离 VM 中运行完整开发环境，Bugbot Autofix 超35%的改动被直接合入原 PR。来源：https://www.51cto.com/article/837269.html</p>
+                    </div>
+                    <div class="border-l-2 border-blue-500 pl-4">
+                        <h4 class="font-semibold text-blue-300 mb-1">🛠️ GitHub Copilot 2025年8月更新</h4>
+                        <p class="text-sm text-gray-400">GitHub Copilot 新增自动模型选择功能，可根据可用性智能匹配最优 AI 模型。同时增加敏感文件编辑确认机制，增强安全性。支持 AGENTS.md 文件，可向代理提供额外上下文。来源：https://www.cnblogs.com/tanggoahead/p/19089819</p>
                     </div>
                 </div>
             </div>
@@ -348,7 +356,7 @@
         // AI Tools Database with Detailed Comparison Data
         // ============================================
         
-        // 最后更新时间: 2026-03-18
+        // 最后更新时间: 2026-03-21
 const toolsData = [
             // OpenClaw 生态
             {
@@ -481,14 +489,6 @@ const toolsData = [
                     '代码质量': '极高'
                 }
             },
-                    '编辑器': 'VS Code 分支',
-                    'Agent 能力': 'Cursor Agent (强)',
-                    '多文件编辑': 'Composer',
-                    '价格': '$20/月',
-                    '代码质量': '极高',
-                    '用户规模': '36万付费用户'
-                }
-            },
             {
                 id: 'windsurf',
                 name: 'Windsurf',
@@ -539,23 +539,6 @@ const toolsData = [
                     'Agent': '自定义 Agent',
                     '价格': '免费/$10/$100',
                     '中文支持': '顶尖'
-                }
-            },
-                priceText: '免费/Pro $10起',
-                rating: 4.5,
-                tags: ['IDE', '国产', '字节', 'Freemium'],
-                isNew: true,
-                addedDate: '2025-01-20',
-                strengths: ['基础版免费', '国内访问快', '中文支持优秀', 'Builder 模式', '豆包/Claude/GPT 多模型'],
-                weaknesses: ['Pro 版 $10/月', '功能不如 Cursor 全面', '生态初期', '国际化弱'],
-                bestFor: ['国内开发者', '学生', '预算有限', '中文优先用户'],
-                comparisonPoints: {
-                    '核心 AI': '豆包/Claude/GPT 可选',
-                    '编辑器': '自研 (VS Code 兼容)',
-                    'Builder 模式': '支持',
-                    '价格': '免费/$10/$100',
-                    '中文支持': '顶尖',
-                    '发布日期': '2025年1月'
                 }
             },
             {
@@ -690,22 +673,6 @@ const toolsData = [
                     '代码能力': '业界顶尖'
                 }
             },
-                rating: 4.9,
-                tags: ['安全', '长文本', 'Claude 4.6'],
-                isNew: true,
-                addedDate: '2025-03-03',
-                strengths: ['Claude Sonnet 4.6 (2025.02)', '代码能力业界最强 (72.5% SWE-bench)', '200K 上下文 (1M beta)', 'Artifacts/Projects/扩展', '推理能力顶尖'],
-                weaknesses: ['无插件生态', '部分地区受限', '免费版额度少'],
-                bestFor: ['程序员', '长文档处理', '注重安全', '代码任务'],
-                comparisonPoints: {
-                    '最强模型': 'Claude Sonnet 4.6',
-                    '上下文': '200K (1M beta)',
-                    '代码能力': '72.5% SWE-bench',
-                    '特色功能': 'Artifacts/Projects/扩展',
-                    '价格': '$20/月',
-                    '发布日期': '2025年2月更新'
-                }
-            },
             {
                 id: 'kimi',
                 name: 'Kimi',
@@ -730,14 +697,6 @@ const toolsData = [
                     '特色功能': 'OK Computer/Kimi Code',
                     '价格': '免费/按量',
                     '中文': '顶尖'
-                }
-            },
-                    '最强模型': 'Kimi K2 (1万亿参数)',
-                    '上下文': '200万字 / 128K tokens',
-                    '特色功能': '超长文本/开源/K2 Thinking',
-                    '价格': '免费/按量 (¥4/百万tokens)',
-                    '中文': '顶尖',
-                    '架构': 'MoE (320亿激活)'
                 }
             },
             {
